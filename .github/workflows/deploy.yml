@@ -19,5 +19,4 @@ jobs:
           
       - name: Deploy files via RSYNC
         run: |
-          rsync -avz --no-perms --no-owner --no-group --delete -e "ssh -i ~/.ssh/deploy_key.pem" ./ user@server:/var/www/html/
-          ssh -i ~/.ssh/deploy_key.pem user@server "sudo chown -R www-data:www-data /var/www/html && sudo chmod -R 755 /var/www/html"
+          rsync -avz --no-perms --no-owner --group --chmod=D2755,F644 --delete -e "ssh -i ~/.ssh/deploy_key.pem"@${{ secrets.SERVER_IP }}/
