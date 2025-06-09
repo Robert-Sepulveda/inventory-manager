@@ -1,7 +1,8 @@
 name: Deploy to NGINX
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+      - main
 
 jobs:
   deploy:
@@ -18,5 +19,4 @@ jobs:
           
       - name: Deploy files via RSYNC
         run: |
-          rsync -avz --chmod=755 --no-perms --no-owner --no-group --delete -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.NGINX_WEB_ROOT }}/
-          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "sudo chown -R www-data:www-data ${{ secrets.NGINX_WEB_ROOT }} && sudo chmod -R 755 ${{ secrets.NGINX_WEB_ROOT }}"
+          rsync -avz --no-perms --no-owner --chmod=D2755,F644 --delete -e "ssh -i ~/.ssh/deploy_key.pem" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.NGINX_WEB_ROOT }}/
