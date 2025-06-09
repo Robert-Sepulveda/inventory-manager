@@ -45,7 +45,7 @@
     <div class="container">
 		<?php
 		include("../functions.php");
-		include("../webfunction.php");
+		include("../webfunctions.php");
 		$active_manus=[];
 		$active_devices=[];
 		$endPoint = $_SERVER['REQUEST_URI'];
