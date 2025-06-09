@@ -60,7 +60,6 @@
 			echo '<a class="btn btn-primary" href="search.php?type=serialNum">Search by Serial Number</a>';
 			echo '<a class="btn btn-primary" href="search.php?type=all">View All</a>';
 		}
-		// search by device
 		else if ($_GET['type']=="device")
 		{
 		?>
@@ -86,43 +85,32 @@
 			<button type="submit" class="btn btn-success" value="device_search" name="submit">Search</button>
 		</form>
 		<?php
-			  }
-			  // serach by manufacturer
-			  else if($_GET['type']=="manufacturer")
-			  {
-				  echo '<form method="post" action="">';
-				  	echo '<div class="form-group">';
-				  		echo '<label for="exampleDevice">Manufacturer:</label>';
-				  		echo '<select class="form-control" name="manufacturer">';
-				  			$sql="Select `manufacturer` from `manufacturers`";
-				  
-							  $result=$dblink->query($sql) or
-								  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
-							  while ($data=$result->fetch_array(MYSQLI_ASSOC))
-							  {
-								  $value=str_replace(" ","_",$data['manufacturer']);
-								  echo '<option value="'.$value.'">'.$data['manufacturer'].'</option>';
-								  $active_manus[]=$data['manufacturer'];
-							  }
-				  			  $manus = join("','",$active_manus);
-							  echo '<option value="all">All Manufacturers</option>';
-				  		echo '</select>';
-				  		echo '<label for="exampleDevice">Device:</label>';
-				  		echo '<select class="form-control" name="device">';
-							$sql="Select distinct(`device_type`) from `device_types`";
-
-							$result=$dblink->query($sql) or
-								die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
-							while ($data=$result->fetch_array(MYSQLI_ASSOC))
-							{
-								$value=str_replace(" ","_",$data['device_type']);
-								echo '<option value="'.$value.'">'.$data['device_type'].'</option>';
-							}
-							echo '<option value="all">All Devices</option>';
-				  		echo '</select>';
-				  	echo '</div>';
-				  	echo '<button type="submit" class="btn btn-success" value="manu_search" name="submit">Search</button>';
-				  echo '</form>';
+		}
+		else if($_GET['type']=="manufacturer")
+		{
+		?>
+		<form method="post" action="">
+			<div class="form-group">
+				<label for="exampleDevice">Manufacturer:</label>
+				<select class="form-control" name="manufacturer">
+					<?php
+				  	$sql="Select `manufacturer` from `manufacturers` where `status`='active'";
+					getSearchOptions($dblink,$sql,$endPoint,$uri);				  
+					?>
+					<option value="all">All Manufacturers</option>
+				</select>
+				<label for="exampleDevice">Device:</label>
+				<select class="form-control" name="device">
+					<?php
+					$sql="Select `device_type` from `device_types` where `status`='active'";
+					getSearchOptions($dblink,$sql,$endPoint,$uri);
+					?>
+					<option value="all">All Devices</option>
+				</select>
+			</div>
+		<button type="submit" class="btn btn-success" value="manu_search" name="submit">Search</button>
+		</form>
+		<?php
 			  }
 			  // search by serial number
 			  else if ($_GET['type']=="serialNum")
