@@ -17,10 +17,10 @@ function queryWebData($dblink, $sql, $endPoint, $uri)
 function getSearchOptions($dblink,$sql,$endPoint,$uri)
 {
     $result=queryWebData($dblink,$sql,$endPoint,$uri);
-	while ($data=$result->fetch_array(MYSQLI_ASSOC))
+	while ($data=$result->fetch_row())
 	{
-		$value=str_replace(" ","_",$data['device_type']);
-		echo '<option value="'.$value.'">'.$data['device_type'].'</option>';
+		$value=str_replace(" ","_",$data[0]);
+		echo '<option value="'.$value.'">'.$data[0].'</option>';
 	}
 }
 
