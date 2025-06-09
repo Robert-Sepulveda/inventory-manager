@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Advanced Software Engineering</title>
+<link href="../assets/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/font-awesome.min.css">
+<link rel="stylesheet" href="../assets/css/owl.carousel.css">
+<link rel="stylesheet" href="../assets/css/owl.theme.default.min.css">
+<link rel="stylesheet" href="../assets/css/dataTables.dataTables.css">
+	
+<!-- MAIN CSS -->
+<link rel="stylesheet" href="../assets/css/templatemo-style.css">
+<script src="../assets/js/jquery-3.5.1.js"></script>
+<script src="../assets/js/dataTables.js"></script>
+</head>
+<body>
+<body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
+     <!-- MENU -->
+     <section class="navbar custom-navbar navbar-fixed-top" role="navigation">
+          <div class="container">
+               <div class="navbar-header">
+                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                         <span class="icon icon-bar"></span>
+                    </button>
+
+                    <!-- lOGO TEXT HERE -->
+                    <a href="#" class="navbar-brand">Search Equipment Database</a>
+               </div>
+               <!-- MENU LINKS -->
+               <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-nav-first">
+                         <li><a href="index.php" class="smoothScroll">Home</a></li>
+                         <li><a href="search.php" class="smoothScroll">Search Equipment</a></li>
+                         <li><a href="add.php" class="smoothScroll">Add Equipment</a></li>
+                    </ul>
+               </div>
+          </div>
+     </section>
+ <!-- HOME -->
+     <section id="home">
+          </div>
+     </section>
+     <!-- FEATURE -->
+     <section id="feature">
+          <div class="container">
+			  <?php
+			  $active_manus=[];
+			  $active_devices=[];
+			  $un="web_user";
+			  $pw="BMxptDhPcsOh6dN-";
+			  $db="equipment";
+			  $host="localhost";
+			  $dblink=new mysqli($host,$un,$pw,$db);
+			  $query_count = 0;
+			  if (!isset($_GET['type']))
+			  {
+				  echo '<a class="btn btn-primary" href="search.php?type=device">Search by Device</a>';
+				  echo '<a class="btn btn-primary" href="search.php?type=manufacturer">Search by Manufacturer</a>';
+				  echo '<a class="btn btn-primary" href="search.php?type=serialNum">Search by Serial Number</a>';
+				  echo '<a class="btn btn-primary" href="search.php?type=all">View All</a>';
+			  }
+			  // search by device
+			  else if ($_GET['type']=="device")
+			  {
+
+				  echo '<form method="post" action="">';
+				  	echo '<div class="form-group">';
+				  		echo '<label for="exampleDevice">Device:</label>';
+				  		echo '<select class="form-control" name="device">';
+							$sql="Select distinct(`device_type`) from `device_types`";
+
+							$result=$dblink->query($sql) or
+								die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+							while ($data=$result->fetch_array(MYSQLI_ASSOC))
+							{
+								$value=str_replace(" ","_",$data['device_type']);
+								echo '<option value="'.$value.'">'.$data['device_type'].'</option>';
+							}
+							echo '<option value="all">All Devices</option>';
+				  		echo '</select>';
+				  		echo '<label for="exampleDevice">Manufacturer:</label>';
+				  		echo '<select class="form-control" name="manufacturer">';
+				  			$sql="Select `manufacturer` from `manufacturers`";
+				  
+							  $result=$dblink->query($sql) or
+								  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+							  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+							  {
+								  $value=str_replace(" ","_",$data['manufacturer']);
+								  echo '<option value="'.$value.'">'.$data['manufacturer'].'</option>';
+								  $active_manus[]=$data['manufacturer'];
+							  }
+				  			  $manus = join("','",$active_manus);
+							  echo '<option value="all">All Manufacturers</option>';
+				  		echo '</select>';
+				  	echo '</div>';
+				  	echo '<button type="submit" class="btn btn-success" value="device_search" name="submit">Search</button>';
+				  echo '</form>';
+			  }
+			  // serach by manufacturer
+			  else if($_GET['type']=="manufacturer")
+			  {
+				  echo '<form method="post" action="">';
+				  	echo '<div class="form-group">';
+				  		echo '<label for="exampleDevice">Manufacturer:</label>';
+				  		echo '<select class="form-control" name="manufacturer">';
+				  			$sql="Select `manufacturer` from `manufacturers`";
+				  
+							  $result=$dblink->query($sql) or
+								  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+							  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+							  {
+								  $value=str_replace(" ","_",$data['manufacturer']);
+								  echo '<option value="'.$value.'">'.$data['manufacturer'].'</option>';
+								  $active_manus[]=$data['manufacturer'];
+							  }
+				  			  $manus = join("','",$active_manus);
+							  echo '<option value="all">All Manufacturers</option>';
+				  		echo '</select>';
+				  		echo '<label for="exampleDevice">Device:</label>';
+				  		echo '<select class="form-control" name="device">';
+							$sql="Select distinct(`device_type`) from `device_types`";
+
+							$result=$dblink->query($sql) or
+								die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+							while ($data=$result->fetch_array(MYSQLI_ASSOC))
+							{
+								$value=str_replace(" ","_",$data['device_type']);
+								echo '<option value="'.$value.'">'.$data['device_type'].'</option>';
+							}
+							echo '<option value="all">All Devices</option>';
+				  		echo '</select>';
+				  	echo '</div>';
+				  	echo '<button type="submit" class="btn btn-success" value="manu_search" name="submit">Search</button>';
+				  echo '</form>';
+			  }
+			  // search by serial number
+			  else if ($_GET['type']=="serialNum")
+			  {
+				  echo '<form method="post" action="">';
+				  	echo '<div class="form-group">';
+				  		echo '<label for="exampleDevice">Serial Number:</label>';
+				  		echo '<input type="text" class="form-control" name="serial" size="100">';
+				  	echo '</div>';
+				  	echo '<button type="submit" class="btn btn-success" value="sn_search" name="submit">Search</button>';
+				  echo '</form>';
+			  }
+			  // view all
+			  else
+			  {
+				  echo '<form method="post" action="">';
+				  	echo '<div class="form-group">';
+				  		echo '<label for="exampleDevice">View All:</label>';
+				  		echo '<select class="form-control" name="equipment">';
+				  			echo '<option value="active">active</option>';
+							echo '<option value="inactive">inactive</option>';
+							echo '<option value="all">all</option>';
+				  		echo '</select>';
+				  	echo '</div>';
+				  	echo '<button type="submit" class="btn btn-success" value="all_search" name="submit">Search</button>';
+				  echo '</form>';
+			  }
+			  // device and manufacturer post
+			  if (isset($_POST['submit']) && ($_POST['submit']=="device_search" || $_POST['submit']=="manu_search"))
+			  {
+				  echo '<table class="display" style="width:100%">';
+				  echo '<thead>';
+				  echo '<tr><th>Number</th><th>Device Type</th><th>Manufacturer</th><th>Serial Number</th>';
+				  echo '<th>Action</th>';
+				  echo '</tr>';
+				  echo '</thead>';
+				  echo '<tbody>';
+				  $type=str_replace("_"," ",$_POST['device']);
+				  $manu=str_replace("_"," ",$_POST['manufacturer']);
+				  if ($manu=="all")
+					  $manuStr="`manufacturer` like '%'";
+				  else
+					  $manuStr="`manufacturer`='$manu'";
+				  if ($type=="all")
+					  $typeStr="`device_type` like '%'";
+				  else
+					  $typeStr="`device_type`='$type'";
+				  $sql="Select * from `devices` where $typeStr and $manuStr limit 1000";	  
+				  $result=$dblink->query($sql) or
+					  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+				  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+				  {
+					  $line = $query_count + 1;
+					  echo '<tr>';
+				      echo '<td>'.$line.'</td><td>'.$data['device_type'].'</td><td>'.$data['manufacturer'].'</td><td>SN-'.$data['serial_number'].'</td>';
+					  echo '<td><a class="btn btn-success" href="view.php?eid='.$data['auto_id'].'">View</a></td>';
+					  echo '</tr>';
+					  $query_count++;
+				  }
+				  echo '</tbody>';
+			  }
+			  // serial post
+			  else if (isset($_POST['submit']) && $_POST['submit']=="sn_search")
+			  {
+				  echo '<table class="display" style="width:100%">';
+				  echo '<thead>';
+				  echo '<tr><th>Number</th><th>Device Type</th><th>Manufacturer</th><th>Serial Number</th>';
+				  echo '<th>Action</th>';
+				  echo '</tr>';
+				  echo '</thead>';
+				  echo '<tbody>';
+				  $serial=str_replace("SN-"," ",$_POST['serial']);
+				  $serial = trim($serial);
+				  $serialStr="`serial_number`='$serial'";
+				  $sql="Select * from `devices` where $serialStr limit 1000";
+				  $result=$dblink->query($sql) or
+				  	die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+				  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+				  {
+					  $line = $query_count + 1;
+					  echo '<tr>';
+				      echo '<td>'.$line.'</td><td>'.$data['device_type'].'</td><td>'.$data['manufacturer'].'</td><td>SN-'.$data['serial_number'].'</td>';
+					  echo '<td><a class="btn btn-success" href="view.php?eid='.$data['auto_id'].'">View</a></td>';
+					  echo '</tr>';
+					  $query_count++;
+				  }
+				  echo '</tbody>';		
+			  }
+			  // view all
+			  else if (isset($_POST['submit']) && $_POST['submit']=="all_search")
+			  {
+				  echo '<table class="display" style="width:100%">';
+				  echo '<thead>';
+				  echo '<tr><th>Number</th><th>Device Type</th><th>Manufacturer</th><th>Serial Number</th>';
+				  echo '<th>Action</th>';
+				  echo '</tr>';
+				  echo '</thead>';
+				  echo '<tbody>';
+				  $sql="Select `manufacturer` from `manufacturers` where `status` = 'active'";
+				  $result=$dblink->query($sql) or
+					die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+				  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+				  {			  
+				  	$active_manus[]=$data['manufacturer'];
+				  }
+				  $manus = join("','",$active_manus);
+				  $sql="Select `device_type` from `device_types` where `status` = 'active'";
+				  $result=$dblink->query($sql) or
+					die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+				  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+				  {			  
+				  	$active_device[]=$data['device_type'];
+				  }
+				  $devices = join("','",$active_device);
+				  if($_POST['equipment']=="active")
+				  {
+					  $manuStr="`manufacturer` in ('$manus')";
+					  $deviceStr="`device_type` in ('$devices')";
+					  $sql="Select * from `devices` join `inactive_devices` on `devices`.`auto_id`!=`device_id` where $manuStr and $deviceStr  limit 1000";
+				  }
+				  else if($_POST['equipment']=="inactive")
+				  {
+					  $manuStr="`manufacturer` not in ('$manus')";
+					  $deviceStr="`device_type` not in ('$devices')";
+					  $sql="Select * from `devices` where $manuStr or $deviceStr limit 1000";
+				  }
+				  else
+				  {
+					  $sql="Select * from `devices` limit 1000";
+				  }
+				  $result=$dblink->query($sql) or
+					  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
+				  while ($data=$result->fetch_array(MYSQLI_ASSOC))
+				  {
+					  $line = $query_count + 1;
+					  echo '<tr>';
+				      echo '<td>'.$line.'</td><td>'.$data['device_type'].'</td><td>'.$data['manufacturer'].'</td><td>SN-'.$data['serial_number'].'</td>';
+					  echo '<td><a class="btn btn-success" href="view.php?eid='.$data['auto_id'].'">View</a></td>';
+					  echo '</tr>';
+					  $query_count++;
+				  }
+				  echo '</tbody>';
+			  }
+			  ?>
+          </div>
+     </section>
+</body>
+</html>
