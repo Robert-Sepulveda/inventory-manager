@@ -51,7 +51,7 @@
 		$endPoint = $_SERVER['REQUEST_URI'];
 		$uri = $_SERVER['REMOTE_ADDR'];
 		$db="equipment";
-		$db_link = db_connect($db);
+		$dblink = db_connect($db);
 		$query_count = 0;
 		if (!isset($_GET['type']))
 		{
