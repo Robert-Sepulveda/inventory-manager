@@ -15,7 +15,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key.pem
           chmod 600 ~/.ssh/deploy_key.pem
-
+          
       - name: Deploy files via RSYNC
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.NGINX_WEB_ROOT }}/
+          rsync -avz --chmod=755 --no-perms --no-owner --no-group --delete -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.NGINX_WEB_ROOT }}/
+          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "sudo chown -R www-data:www-data ${{ secrets.NGINX_WEB_ROOT }} && sudo chmod -R 755 ${{ secrets.NGINX_WEB_ROOT }}"
