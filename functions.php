@@ -81,6 +81,7 @@ function isDidNull($did)
 	}
 	return false;
 }
+
 function isMidNull($mid)
 {
 	$output=array();
@@ -95,6 +96,7 @@ function isMidNull($mid)
 	}
 	return false;
 }
+
 function isSnNull($sn)
 {
 	$output=array();

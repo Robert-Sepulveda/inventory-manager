@@ -16,89 +16,76 @@
 </head>
 <body>
 <body id="top" data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
-     <!-- MENU -->
-     <section class="navbar custom-navbar navbar-fixed-top" role="navigation">
-          <div class="container">
-               <div class="navbar-header">
-                    <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                         <span class="icon icon-bar"></span>
-                         <span class="icon icon-bar"></span>
-                         <span class="icon icon-bar"></span>
-                    </button>
-
-                    <!-- lOGO TEXT HERE -->
-                    <a href="#" class="navbar-brand">Search Equipment Database</a>
-               </div>
-               <!-- MENU LINKS -->
-               <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-nav-first">
-                         <li><a href="index.php" class="smoothScroll">Home</a></li>
-                         <li><a href="search.php" class="smoothScroll">Search Equipment</a></li>
-                         <li><a href="add.php" class="smoothScroll">Add Equipment</a></li>
-                    </ul>
-               </div>
-          </div>
-     </section>
- <!-- HOME -->
-     <section id="home">
-          </div>
-     </section>
-     <!-- FEATURE -->
-     <section id="feature">
-          <div class="container">
-			  <?php
-			  $active_manus=[];
-			  $active_devices=[];
-			  $un="web_user";
-			  $pw="BMxptDhPcsOh6dN-";
-			  $db="equipment";
-			  $host="localhost";
-			  $dblink=new mysqli($host,$un,$pw,$db);
-			  $query_count = 0;
-			  if (!isset($_GET['type']))
-			  {
-				  echo '<a class="btn btn-primary" href="search.php?type=device">Search by Device</a>';
-				  echo '<a class="btn btn-primary" href="search.php?type=manufacturer">Search by Manufacturer</a>';
-				  echo '<a class="btn btn-primary" href="search.php?type=serialNum">Search by Serial Number</a>';
-				  echo '<a class="btn btn-primary" href="search.php?type=all">View All</a>';
-			  }
-			  // search by device
-			  else if ($_GET['type']=="device")
-			  {
-
-				  echo '<form method="post" action="">';
-				  	echo '<div class="form-group">';
-				  		echo '<label for="exampleDevice">Device:</label>';
-				  		echo '<select class="form-control" name="device">';
-							$sql="Select distinct(`device_type`) from `device_types`";
-
-							$result=$dblink->query($sql) or
-								die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
-							while ($data=$result->fetch_array(MYSQLI_ASSOC))
-							{
-								$value=str_replace(" ","_",$data['device_type']);
-								echo '<option value="'.$value.'">'.$data['device_type'].'</option>';
-							}
-							echo '<option value="all">All Devices</option>';
-				  		echo '</select>';
-				  		echo '<label for="exampleDevice">Manufacturer:</label>';
-				  		echo '<select class="form-control" name="manufacturer">';
-				  			$sql="Select `manufacturer` from `manufacturers`";
-				  
-							  $result=$dblink->query($sql) or
-								  die("<h2>Something went wrong with $sql<br>".$dblink->error."</h2>");
-							  while ($data=$result->fetch_array(MYSQLI_ASSOC))
-							  {
-								  $value=str_replace(" ","_",$data['manufacturer']);
-								  echo '<option value="'.$value.'">'.$data['manufacturer'].'</option>';
-								  $active_manus[]=$data['manufacturer'];
-							  }
-				  			  $manus = join("','",$active_manus);
-							  echo '<option value="all">All Manufacturers</option>';
-				  		echo '</select>';
-				  	echo '</div>';
-				  	echo '<button type="submit" class="btn btn-success" value="device_search" name="submit">Search</button>';
-				  echo '</form>';
+    <!-- MENU -->
+    <section class="navbar custom-navbar navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon icon-bar"></span>
+                    <span class="icon icon-bar"></span>
+                    <span class="icon icon-bar"></span>
+                </button>
+	            <!-- lOGO TEXT HERE -->
+                <a href="#" class="navbar-brand">Search Equipment Database</a>
+            </div>
+            <!-- MENU LINKS -->
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-nav-first">
+                    <li><a href="index.php" class="smoothScroll">Home</a></li>
+                    <li><a href="search.php" class="smoothScroll">Search Equipment</a></li>
+                    <li><a href="add.php" class="smoothScroll">Add Equipment</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+<!-- HOME -->
+<section id="home"></section>
+<!-- FEATURE -->
+<section id="feature">
+    <div class="container">
+		<?php
+		include("../functions.php");
+		include("../webfunction.php");
+		$active_manus=[];
+		$active_devices=[];
+		$endPoint = $_SERVER['REQUEST_URI'];
+		$uri = $_SERVER['REMOTE_ADDR'];
+		$db="equipment";
+		$db_link = db_connect($db);
+		$query_count = 0;
+		if (!isset($_GET['type']))
+		{
+			echo '<a class="btn btn-primary" href="search.php?type=device">Search by Device</a>';
+			echo '<a class="btn btn-primary" href="search.php?type=manufacturer">Search by Manufacturer</a>';
+			echo '<a class="btn btn-primary" href="search.php?type=serialNum">Search by Serial Number</a>';
+			echo '<a class="btn btn-primary" href="search.php?type=all">View All</a>';
+		}
+		// search by device
+		else if ($_GET['type']=="device")
+		{
+		?>
+		<form method="post" action="">
+			<div class="form-group">
+				<label for="exampleDevice">Device:</label>
+				<select class="form-control" name="device">
+					<?php
+					$sql="Select `device_type` from `device_types` where `status`='active'";
+					getSearchOptions($dblink,$sql,$endPoint,$uri);
+					?>
+					<option value="all">All Devices</option>
+				</select>
+				<label for="exampleDevice">Manufacturer:</label>
+				<select class="form-control" name="manufacturer">';
+					<?php
+					$sql="Select `manufacturer` from `manufacturers` where `status`='active'";
+					getSearchOptions($dblink,$sql,$endPoint,$uri);
+					?>
+					<option value="all">All Manufacturers</option>
+				</select>
+			</div>
+			<button type="submit" class="btn btn-success" value="device_search" name="submit">Search</button>
+		</form>
+		<?php
 			  }
 			  // serach by manufacturer
 			  else if($_GET['type']=="manufacturer")
