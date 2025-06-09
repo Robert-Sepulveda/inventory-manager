@@ -19,4 +19,5 @@ jobs:
           
       - name: Deploy files via RSYNC
         run: |
-          rsync -avz --no-perms --no-owner --group --chmod=D2755,F644 --delete -e "ssh -i ~/.ssh/deploy_key.pem"@${{ secrets.SERVER_IP }}/
+          rsync -avz --chmod=755 --no-perms --no-owner --no-group --delete -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" ./ ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.NGINX_WEB_ROOT }}/
+          ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}
