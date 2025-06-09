@@ -1,5 +1,4 @@
 <?php
-include("functions.php");
 // queries data and returns result
 function queryWebData($dblink, $sql, $endPoint, $uri)
 {
