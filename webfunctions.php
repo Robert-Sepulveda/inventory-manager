@@ -16,7 +16,7 @@ function queryWebData($dblink, $sql, $endPoint, $uri)
 // display select options
 function getSearchOptions($dblink,$sql,$endPoint,$uri)
 {
-    $result=$dblink->queryWebData($dblink,$sql,$endPoint,$uri);
+    $result=queryWebData($dblink,$sql,$endPoint,$uri);
 	while ($data=$result->fetch_array(MYSQLI_ASSOC))
 	{
 		$value=str_replace(" ","_",$data['device_type']);
