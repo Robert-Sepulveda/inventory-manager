@@ -188,7 +188,7 @@
 			redirect("index.php?msg=ManufacturerAdded");
 		}
 		?>
-          </div>
-     </section>
+    </div>
+</section>
 </body>
 </html>
