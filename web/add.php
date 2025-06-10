@@ -156,7 +156,7 @@
 			$result=queryWebData($dblink,$sql,$endPoint,$uri);
 			if ($result->num_rows>0)//sn already exists
 				redirect("add.php?type=equipment&msg=snexists");
-			$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$line_num','$device','$manufacturer','$serialNumber')";
+			$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$device','$manufacturer','$serialNumber')";
 			queryWebData($dblink,$sql,$endPoint,$uri);
 			redirect("index.php?msg=EquipmentAdded");				
 		}
