@@ -63,13 +63,13 @@
 					$active = "inactive";
 				$sql="Select * from `manufacturers` where `manufacturer`='$manu' and `status`='active'";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
-				if ($result->num_rows>=0)
+				if ($result->num_rows>0)
 					$mactive = "active";
 				else
 					$mactive = "inactive";
                     $sql="Select * from `device_types` where `device_type`='$device' and `status`='active'";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
-				if ($result->num_rows>=0)
+				if ($result->num_rows>0)
 					$dactive = "active";
 				else
 					$dactive = "inactive";
