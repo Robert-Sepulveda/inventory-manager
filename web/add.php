@@ -44,6 +44,7 @@
         <?php 
 		include('../functions.php');
 		include('../webfunctions.php');
+		include('../datahandler.php');
 		$endPoint = $_SERVER['REQUEST_URI'];
 		$uri = $_SERVER['REMOTE_ADDR'];
 		$db="equipment";
@@ -56,14 +57,22 @@
 		}
 		else if ($_GET['type']=="equipment")
 		{
-			if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="SerialExists")
+			if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="snexists")
             {
                 echo '<div class="alert alert-danger" role="alert">Serial number already registered.</div>';            
             }
-			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="error")
+			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="sn")
             {
                 echo '<div class="alert alert-danger" role="alert">Formatting: must be letter a-f, numbers 0-9, and exactly 64 characters long</div>';          
             }
+			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="device")
+			{
+				echo '<div class="alert alert-danger" role="alert">Formatting: only lowercase letters, name cannot be longer than 24 characters</div>';
+			}
+			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="manu")
+			{
+				echo '<div class="alert alert-danger" role="alert">Formatting: only letters, name cannot be longer than 24 characters/div>';
+			}
 		?>
 		<form method="post" action="">
 			<div class="form-group">
@@ -94,11 +103,11 @@
 		}
 		else if ($_GET['type']=="device")
 		{
-			if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="DeviceExists")
+			if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="deviceexists")
             {
             	echo '<div class="alert alert-danger" role="alert">Device already exists.</div>';                        
             }
-			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="error")
+			else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="device")
             {
             	echo '<div class="alert alert-danger" role="alert">Formatting: only lowercase letters, name cannot be longer than 24 characters</div>';            
             }
@@ -114,11 +123,11 @@
 		}
 		else if ($_GET['type']=="manufacturer")
 		{
-		if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="ManufacturerExists")
+		if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="manuexists")
         {
             echo '<div class="alert alert-danger" role="alert">Manufacturer already exists.</div>';                
         }
-		else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="error")
+		else if (isset($_REQUEST['msg']) && $_REQUEST['msg']=="manu")
         {
         	echo '<div class="alert alert-danger" role="alert">Formatting: only letters, name cannot be longer than 24 characters</div>';
 		}
@@ -128,69 +137,57 @@
 				<label for="exampleDevice">Manufacturer:</label>
 				<input type="text" class="form-control" name="manufacturer">
 			</div>
-			<button type="submit" class="btn btn-primary" name="submit" value="manufacturer">Add Manufacturer</button>';
+			<button type="submit" class="btn btn-primary" name="submit" value="manufacturer">Add Manufacturer</button>
 		</form>
 		<?php
 		}
-    				if (isset($_POST['submit']) and $_POST['submit'] == "equipment")
-    				{
-						$line_num=0;
-        				$device=$_POST['device'];
-        				$manufacturer=$_POST['manufacturer'];
-						$serialNumber=str_replace("SN-"," ",$_POST['serial']);
-						$serialNumber=trim($serialNumber);
-						if(!isValidSN($serialNumber))
-							redirect("add.php?type=equipment&msg=error");
-						$sql="Select `auto_id` from `devices` where `serial_number`='$serialNumber'";
-						$rst=$dblink->query($sql) or
-							 die("<p>Something went wrong with $sql<br>".$dblink->error);
-						if ($rst->num_rows<=0)//sn not previously found
-						{
-							$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$line_num','$device','$manufacturer','$serialNumber')";
-							$dblink->query($sql) or
-								 die("<p>Something went wrong with $sql<br>".$dblink->error);
-							redirect("index.php?msg=EquipmentAdded");
-						}
-						else
-							redirect("add.php?type=equipment&msg=SerialExists");
-					}
-				    else if (isset($_POST['submit']) and $_POST['submit'] == "device")
-					{
-						$device=$_POST['device'];
-						if(!isValidDevice($device))
-							redirect("add.php?type=device&msg=error");
-						$sql="Select `auto_id` from `device_types` where `device_type`='$device'";
-						$rst=$dblink->query($sql) or
-							 die("<p>Something went wrong with $sql<br>".$dblink->error);
-						if ($rst->num_rows<=0)//sn not previously found
-						{
-							$sql="Insert into `device_types` (`device_type`) values ('$device')";
-							$dblink->query($sql) or
-								 die("<p>Something went wrong with $sql<br>".$dblink->error);
-							redirect("index.php?msg=DeviceAdded");
-						}
-						else
-							redirect("add.php?type=device&msg=DeviceExists");
-					}
-				    else if (isset($_POST['submit']) and $_POST['submit'] == "manufacturer")
-					{
-						$manufacturer=$_POST['manufacturer'];
-						if(!isValidManu($manufacturer))
-							redirect("add.php?type=manufacturer&msg=error");
-						$sql="Select `auto_id` from `manufacturers` where `manufacturer`='$manufacturer'";
-						$rst=$dblink->query($sql) or
-							 die("<p>Something went wrong with $sql<br>".$dblink->error);
-						if ($rst->num_rows<=0)//sn not previously found
-						{
-							$sql="Insert into `manufacturers` (`manufacturer`) values ('$manufacturer')";
-							$dblink->query($sql) or
-								 die("<p>Something went wrong with $sql<br>".$dblink->error);
-							redirect("index.php?msg=ManufacturerAdded");
-						}
-						else
-							redirect("add.php?type=manufacturer&msg=ManufacturerExists");
-					}
-		  			?>
+    	if (isset($_POST['submit']) and $_POST['submit'] == "equipment")
+    	{
+        	$device=trim(strtolower($_POST['device']));
+        	$manufacturer=trim(ucwords($_POST['manufacturer']));
+			$serialNumber=trim(str_replace("SN-"," ",$_POST['serial']));
+			if(!isValidDevice($device))
+				redirect("add.php?type=equipment&msg=device");
+			if(!isValidManu($manufacturer))
+				redirect("add.php?type=equipment&msg=manu");
+			if(!isValidSN($serialNumber))
+				redirect("add.php?type=equipment&msg=sn");
+			$sql="Select `auto_id` from `devices` where `serial_number`='$serialNumber'";
+			$result=queryWebData($dblink,$sql,$endPoint,$uri);
+			if ($result->num_rows>0)//sn already exists
+				redirect("add.php?type=equipment&msg=snexists");
+			$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$line_num','$device','$manufacturer','$serialNumber')";
+			queryWebData($dblink,$sql,$endPoint,$uri);
+			redirect("index.php?msg=EquipmentAdded");				
+		}
+		else if (isset($_POST['submit']) and $_POST['submit'] == "device")
+		{
+			$device=trim(strtolower($_POST['device']));
+			if(!isValidDevice($device))
+				redirect("add.php?type=device&msg=device");
+			$sql="Select `auto_id` from `device_types` where `device_type`='$device'";
+			$result=queryWebData($dblink,$sql,$endPoint,$uri);
+			if ($result->num_rows>0)//device already exists
+				redirect("add.php?type=device&msg=deviceexists");
+			$sql="Insert into `device_types` (`device_type`,`status`) values ('$device','active')";
+			queryWebData($dblink,$sql,$endPoint,$uri);
+			redirect("index.php?msg=DeviceAdded");
+							
+		}
+		else if (isset($_POST['submit']) and $_POST['submit'] == "manufacturer")
+		{
+			$manufacturer=trim(ucwords($_POST['manufacturer']));
+			if(!isValidManu($manufacturer))
+				redirect("add.php?type=manufacturer&msg=manu");
+			$sql="Select `auto_id` from `manufacturers` where `manufacturer`='$manufacturer'";
+			$result=queryWebData($dblink,$sql,$endPoint,$uri);
+			if ($result->num_rows>0)//manu already exists
+				redirect("add.php?type=manufacturer&msg=manuexists");			
+			$sql="Insert into `manufacturers` (`manufacturer`,`status`) values ('$manufacturer','active')";
+			queryWebData($dblink,$sql,$endPoint,$uri);
+			redirect("index.php?msg=ManufacturerAdded");
+		}
+		?>
           </div>
      </section>
 </body>
