@@ -88,8 +88,8 @@
 				<label for="exampleManufacturer">Manufacturer:</label>
 				<select class="form-control" name="manufacturer">
 					<?php
-						$sql="Select `manufacturer` from `manufacturers` where `status`='active'";
-						getSearchOptions($dblink,$sql,$endPoint,$uri);
+					$sql="Select `manufacturer` from `manufacturers` where `status`='active'";
+					getSearchOptions($dblink,$sql,$endPoint,$uri);
 					?>
 				</select>
 			</div>
@@ -143,8 +143,8 @@
 		}
     	if (isset($_POST['submit']) and $_POST['submit'] == "equipment")
     	{
-        	$device=trim(strtolower($_POST['device']));
-        	$manufacturer=trim(ucwords($_POST['manufacturer']));
+			$device=strtolower(trim(str_replace("_"," ",$_POST['device'])));
+			$manufacturer=ucwords(trim(str_replace("_"," ",$_POST['manufacturer'])));
 			$serialNumber=trim(str_replace("SN-"," ",$_POST['serial']));
 			if(!isValidDevice($device))
 				redirect("add.php?type=equipment&msg=device");
