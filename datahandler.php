@@ -11,11 +11,11 @@ function addItemToArray($item,&$itemArray)
 }
 
 function isValidDevice($string) {
-    return preg_match('/^[a-z ]{1,23}$/', $string) === 1;
+    return preg_match('/^[a-z ]{1,24}$/', $string) === 1;
 }
 
 function isValidManu($string) {
-    return preg_match('/^[a-zA-Z ]{1,23}$/', $string) === 1;
+    return preg_match('/^[a-zA-Z ]{1,24}$/', $string) === 1;
 }
 
 function isValidSN($string) {
