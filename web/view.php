@@ -43,7 +43,7 @@
                <div class="col-md-12 col-sm-12">
                     <?php
                     include('../functions.php');
-                    include('../webfunction.php');
+                    include('../webfunctions.php');
                     $endPoint = $_SERVER['REQUEST_URI'];
 		          $uri = $_SERVER['REMOTE_ADDR'];
 			  	$db="equipment";
