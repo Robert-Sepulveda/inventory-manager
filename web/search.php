@@ -197,7 +197,7 @@
 					{
 						$manuStr="`manufacturer` not in ('$manus')";
 						$deviceStr="`device_type` not in ('$devices')";
-						$sql="Select * from `devices` where not $manuStr or not $deviceStr limit 1000";
+						$sql="Select * from `devices` where $manuStr or $deviceStr limit 1000";
 					}
 			  	}
 			}
