@@ -61,7 +61,7 @@
 					$active = "active";
 				else
 					$active = "inactive";
-				$sql="Select * from `manufacturers` where `manufcturer`='$manu' and `status`='active'";
+				$sql="Select * from `manufacturers` where `manufacturer`='$manu' and `status`='active'";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
 				if ($result->num_rows>=0)
 					$mactive = "active";
