@@ -1,5 +1,5 @@
 <?php
-// queries data and returns result
+// queries data and returns result, will log an error and return false if the query fails
 function queryWebData($dblink, $sql, $endPoint, $uri)
 {
 	try{
@@ -8,8 +8,7 @@ function queryWebData($dblink, $sql, $endPoint, $uri)
 	}catch (mysqli_sql_exception $e){
 		$error = array($e->getMessage(),$e->getCode(),$e->getFile(),$e->getLine());
 		log_error($endPoint, $uri,$error, "/var/log/db_errors.log");
-        // maybe redirect? figure out how to return an error to result
-		return;
+		return false;
 	}
 }
 
@@ -17,6 +16,8 @@ function queryWebData($dblink, $sql, $endPoint, $uri)
 function getSearchOptions($dblink,$sql,$endPoint,$uri)
 {
     $result=queryWebData($dblink,$sql,$endPoint,$uri);
+	if($result==false)
+		redirect();
 	while ($data=$result->fetch_row())
 	{
 		$value=str_replace(" ","_",$data[0]);
