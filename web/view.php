@@ -54,7 +54,7 @@
 				$info=$result->fetch_array(MYSQLI_ASSOC);
 				$auto_id = $info['auto_id'];
 				$manu = $info['manufacturer'];
-                    $device = $info['device'];
+                    $device = $info['device_type'];
 				$sql="Select * from `devices` join `inactive_devices` where $auto_id = `device_id` limit 1000";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
 				if ($result->num_rows<=0)
