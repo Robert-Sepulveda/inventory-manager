@@ -51,9 +51,9 @@
 				$eid=$_GET['eid'];
 				$sql="Select * from `devices` where `auto_id`='$eid'";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
-				if($result===false)
+				if($result===false or $result->num_rows<=0)
 				{
-					echo '<h2>Something went wrong</h2>';
+					echo "<h2>Something went wrong</h2>";
 				}
 				else
 				{
@@ -61,7 +61,7 @@
 					$auto_id = $info['auto_id'];
 					$manu = $info['manufacturer'];
 					$device = $info['device_type'];
-					$sql="Select * from `devices` join `inactive_devices` where $auto_id = `device_id` limit 1000";
+					$sql="Select * from `devices` join `inactive_devices` where $auto_id = `device_id`";
 					$result=queryWebData($dblink,$sql,$endPoint,$uri);
 					if ($result == false)
 						$active = "unable to display data right now";
