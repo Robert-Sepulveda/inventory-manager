@@ -51,8 +51,10 @@
 				$eid=$_GET['eid'];
 				$sql="Select * from `devices` where `auto_id`='$eid'";
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
-				if($result==false)
+				if($result===false)
+				{
 					echo '<h2>Something went wrong</h2>';
+				}
 				else
 				{
 					$info=$result->fetch_array(MYSQLI_ASSOC);
