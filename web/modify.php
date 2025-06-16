@@ -93,7 +93,7 @@
 				echo '<label for="exampleDevice">Status:</label>';
 				$sql="Select * from `inactive_devices` where `device_id`='$info[auto_id]'";
 				$device_status=queryWebData($dblink,$sql,$endPoint,$uri);
-				$sql="Select * from `device_type` where `device_type`='$info[device_type]' and `status`='inactive'";
+				$sql="Select * from `device_types` where `device_type`='$info[device_type]' and `status`='inactive'";
 				$device_type_status=queryWebData($dblink,$sql,$endPoint,$uri);
 				$sql="Select * from `manufacturers` where `manufacturer`='$info[manufacturer]' and `status`='inactive'";
 				$manu_type_status=queryWebData($dblink,$sql,$endPoint,$uri);
