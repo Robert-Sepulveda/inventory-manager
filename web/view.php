@@ -53,7 +53,7 @@
 				$result=queryWebData($dblink,$sql,$endPoint,$uri);
 				if($result===false or $result->num_rows<=0)
 				{
-					echo "<h2>Something went wrong</h2>";
+					echo "<h2>Something went wrong, try again later.</h2>";
 				}
 				else
 				{
