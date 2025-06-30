@@ -39,7 +39,7 @@ $processStartTime=microtime(true);
 while (($line=fgetcsv($fp)) !== FALSE)
 {
 	$lineNum++;
-	$error;
+	$error=null;
 	// get our entry values
 	$device=$line[0];
 	$manu=$line[1];
