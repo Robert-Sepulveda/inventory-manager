@@ -3,7 +3,7 @@ $directory="/home/ubuntu/files/test";
 $scanned_dir=array_diff(scandir($directory),array('..','.'));		// filter out .. and . from our directory array by getting the difference
 $count = 0;
 $batch = 0;
-timeLog="/var/log/test-results.log";
+$timeLog="/var/log/test-results.log";
 $startTime=microtime(true);
 if($argv[1] == 1)
 {

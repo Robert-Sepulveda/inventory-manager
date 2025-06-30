@@ -33,7 +33,7 @@ $maxEntryLength=64;
 $processNum = intval($process)-2;
 $fileSize = 10000
 $lineNum = $target + ($processNum * $fileSize);
-timeLog="/var/log/test-results.log"
+$timeLog="/var/log/test-results.log"
 
 $processStartTime=microtime(true);
 while (($line=fgetcsv($fp)) !== FALSE)
