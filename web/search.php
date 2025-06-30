@@ -214,7 +214,7 @@
 			}
 			echo '</tbody>';
 			$end = microtime(true);
-			$totalTime=$endTime-$startTime;
+			$totalTime=$end-$start;
 			$log = "Total time to fetch query: $totalTime seconds";
 			file_put_contents($timeLog, $avg, FILE_APPEND);
 		}
