@@ -131,21 +131,22 @@ function checkForNull(&$line)
 // tries to find a valid type that matches the mispelled string
 function wordMatcher(&$string,$stringArray)
 {
-	$key=null;
-	while($foo = current($stringArray))
+	echo "In wordMatcher: $string";
+	$stringKey=null;
+	foreach($stringArray as $key => $value)
 	{
-		if(str_contains(key($stringArray),$string))
+		if(str_contains(key($key),$string))
 		{
-			if($key)
+			if($stringKey)
 			{
 				return "Cannot identify string"; // multiple entries match the string
 			}
-			$key = key($stringArray);
+			$stringKey = $key;
 		}
 	}
-	if($key)
+	if($stringKey)
 	{
-		$string = $key;
+		$string = $stringKey;
 		return "Mispelled string";
 	}
 	return "Cannot identify string";	// no matching strings found
