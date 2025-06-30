@@ -143,6 +143,7 @@
 		}
     	if (isset($_POST['submit']) and $_POST['submit'] == "equipment")
     	{
+			$start = microtime(true);
 			$device=strtolower(trim(str_replace("_"," ",$_POST['device'])));
 			$manufacturer=ucwords(trim(str_replace("_"," ",$_POST['manufacturer'])));
 			$serialNumber=trim(str_replace("SN-"," ",$_POST['serial']));
@@ -158,10 +159,14 @@
 				redirect("add.php?type=equipment&msg=snexists");
 			$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$device','$manufacturer','$serialNumber')";
 			queryWebData($dblink,$sql,$endPoint,$uri);
+			$end = microtime(true);
+			$totalTime=$end-$start;
+			$log = "Total time to insert entry: $totalTime seconds";
 			redirect("index.php?msg=EquipmentAdded");				
 		}
 		else if (isset($_POST['submit']) and $_POST['submit'] == "device")
 		{
+			$start = microtime(true);
 			$device=trim(strtolower($_POST['device']));
 			if(!isValidDevice($device))
 				redirect("add.php?type=device&msg=device");
@@ -171,11 +176,15 @@
 				redirect("add.php?type=device&msg=deviceexists");
 			$sql="Insert into `device_types` (`device_type`,`status`) values ('$device','active')";
 			queryWebData($dblink,$sql,$endPoint,$uri);
+			$end = microtime(true);
+			$totalTime=$end-$start;
+			$log = "Total time to insert entry: $totalTime seconds";
 			redirect("index.php?msg=DeviceAdded");
 							
 		}
 		else if (isset($_POST['submit']) and $_POST['submit'] == "manufacturer")
 		{
+			$start = microtime(true);
 			$manufacturer=trim(ucwords($_POST['manufacturer']));
 			if(!isValidManu($manufacturer))
 				redirect("add.php?type=manufacturer&msg=manu");
@@ -185,6 +194,9 @@
 				redirect("add.php?type=manufacturer&msg=manuexists");			
 			$sql="Insert into `manufacturers` (`manufacturer`,`status`) values ('$manufacturer','active')";
 			queryWebData($dblink,$sql,$endPoint,$uri);
+			$end = microtime(true);
+			$totalTime=$end-$start;
+			$log = "Total time to insert entry: $totalTime seconds";
 			redirect("index.php?msg=ManufacturerAdded");
 		}
 		?>
