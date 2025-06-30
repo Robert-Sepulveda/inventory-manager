@@ -1,15 +1,16 @@
 <?php
-$directory="/home/ubuntu/files";
+$directory="/home/ubuntu/files/test";
 $scanned_dir=array_diff(scandir($directory),array('..','.'));		// filter out .. and . from our directory array by getting the difference
 $count = 0;
 $batch = 0;
+timeLog="/var/log/test-results.log";
 $startTime=microtime(true);
 if($argv[1] == 1)
 {
 	foreach($scanned_dir as $key=>$value)
 	{
 		$count ++;
-		echo "beginning process $key\n";
+		echo "beginning process "$key-2"\n";
 		shell_exec("/usr/bin/php /var/www/html/import.php $key $value > /home/ubuntu/import.log 2>/home/ubuntu/import.log &");
 		if($count === 5)
 		{
@@ -40,5 +41,9 @@ echo "all processes running\n";
 $endTime=microtime(true);
 $totalTime=$endTime-$startTime;
 $minutes=$totalTime / 60;
-echo "\n Total Time: $minutes minutes\n";
+$average=$minutes / 10;
+$total = "Total time for all processes: $minutes minutes\n";
+$avg = "Average time for process: $average minutes\n";
+file_put_contents($logFile, $total, FILE_APPEND);
+file_put_contents($logFile, $avg, FILE_APPEND);
 ?>
