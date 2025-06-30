@@ -134,7 +134,7 @@ function wordMatcher(&$string,$stringArray)
 	$stringKey=null;
 	foreach($stringArray as $key => $value)
 	{
-		if(str_contains(key($key),$string))
+		if(str_contains($key,$string))
 		{
 			if($stringKey)
 			{
