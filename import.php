@@ -89,6 +89,7 @@ while (($line=fgetcsv($fp)) !== FALSE)
 	if(!$error)
 	{
 		$sql="Insert into `testTable` (`device_type`,`manufacturer`,`serial_number`) values ('$deviceArray[$device]','$manuArray[$manu]','$sn')";
+		echo "line values: $deviceArray[$device],$manuArray[$manu],$sn\n";
 		queryEntry($dblink,$sql,$process,$lineNum);
 	}
 	else
