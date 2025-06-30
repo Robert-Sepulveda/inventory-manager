@@ -88,7 +88,7 @@ while (($line=fgetcsv($fp)) !== FALSE)
 	}
 	if(!$error)
 	{
-		$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$deviceArray[$device]','$manuArray[$manu]','$sn')";
+		$sql="Insert into `testTable` (`device_type`,`manufacturer`,`serial_number`) values ('$deviceArray[$device]','$manuArray[$manu]','$sn')";
 		queryEntry($dblink,$sql,$process);
 	}
 	else
@@ -102,8 +102,8 @@ $minutes=$totalTime / 60;
 $avgentryTime = $minutes / $lineNum
 $total = "Total Time for process $processNum: $minutes minutes\n";
 $avg = "\n Rows per second for process $processNum: ". ($avgentryTime)."\n";
-file_put_contents($logFile, $total, FILE_APPEND);
-file_put_contents($logFile, $avg, FILE_APPEND);
+file_put_contents($timeLog, $total, FILE_APPEND);
+file_put_contents($timeLog, $avg, FILE_APPEND);
 fclose($fp);
 ?>
 

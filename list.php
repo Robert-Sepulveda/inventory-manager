@@ -44,6 +44,6 @@ $minutes=$totalTime / 60;
 $average=$minutes / 10;
 $total = "Total time for all processes: $minutes minutes\n";
 $avg = "Average time for process: $average minutes\n";
-file_put_contents($logFile, $total, FILE_APPEND);
-file_put_contents($logFile, $avg, FILE_APPEND);
+file_put_contents($timeLog, $total, FILE_APPEND);
+file_put_contents($timeLog, $avg, FILE_APPEND);
 ?>
