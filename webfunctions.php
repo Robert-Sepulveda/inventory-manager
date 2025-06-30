@@ -24,5 +24,4 @@ function getSearchOptions($dblink,$sql,$endPoint,$uri)
 		echo '<option value="'.$value.'">'.$data[0].'</option>';
 	}
 }
-
 ?>

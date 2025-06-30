@@ -1,7 +1,7 @@
 <?php
-echo "process $argv[1] to process entries from file $argv[2]\n";
 $process = $argv[1];
 $key = "$argv[2]";
+echo "process "$process-2" to process entries from file $key\n";
 include 'datahandler.php';
 
 $un="web_user";
@@ -19,101 +19,91 @@ try{
 }
 
 // open our current file
-//$fileName="/home/ubuntu/equipment-part2.txt";
-$fileName="/home/ubuntu/files/$key";
+$fileName="/home/ubuntu/files/test/$key";
 if(!file_exists($fileName))
 	die("file not found.\n");
 $fp=fopen("$fileName","r") ;
 if(!$fp)
 	die('failed to open file.\n');
 
-$entryErrors=array();
-$spellingErrors=array();
-$countError=array();
-$deviceArray=array("laptop","television","tablet","mobile phone","vehicle","smart watch","computer");
-$manuArray=array("Huawei","Vizio","Samsung","Nokia","KIA","Ford","Google","Nissan","IBM","Sony","Dell","Apple","LG","Microsoft","Chevorlet","TCL","GM","Toyota","Panasonic","Hyundai","Hisense","Motorola","OnePlus","HP");
+$deviceArray=array("laptop"=>0,"television"=>1,"tablet"=>2,"mobile phone"=>3,"vehicle"=>4,"smart watch"=>5,"computer"=>6);
+$manuArray=array("Huawei"=>0,"Vizio"=>1,"Samsung"=>2,"Nokia"=>3,"KIA"=>4,"Ford"=>5,"Google"=>6,"Nissan"=>7,"IBM"=>8,"Sony"=>9,"Dell"=>10,"Apple"=>11,"LG"=>12,"Microsoft"=>13,"Chevorlet"=>14,"TCL"=>16,"GM"=>17,"Toyota"=>18,"Panasonic"=>19,"Hyundai"=>20,"Hisense"=>21,"Motorola"=>22,"OnePlus"=>23,"HP"=>24);
 $snArray=array();
-$maxEntryLengths=array(24,24,64);
+$maxEntryLength=64;
 $processNum = intval($process)-2;
-$target=0;
-$lineNum = $target + ($processNum * 100000);
-$queryattempt=0;
-$maxqueries=3;
-$startTime=microtime(true);
-cycleLines($fp,$target);
+$fileSize = 10000
+$lineNum = $target + ($processNum * $fileSize);
+timeLog="/var/log/test-results.log"
+
+$processStartTime=microtime(true);
 while (($line=fgetcsv($fp)) !== FALSE)
 {
 	$lineNum++;
-	$spellingErrors=[];
-	$entryErrors = [];
-	$countErrors=[];
+	$error;
 	// get our entry values
 	$device=$line[0];
 	$manu=$line[1];
 	$sn=$line[2];
 	$entryLine=array(&$device,&$manu,&$sn);
 	
+	// NOTE: no entries exceed length, removed for efficiency
 	// check for right number of entries
-	checkEntryCount($entryLine,$countError,$entryErrors);
-	if($countError)
-		logErrors($dblink,$process,$line,$lineNum,$countError);
+	// checkEntryCount($entryLine,$countError,$entryErrors);
+	// if($countError)
+	// 	logErrors($dblink,$process,$line,$lineNum,$countError);
 	
 	// check for null values
-	checkForNull($entryLine,$entryErrors);
+	$error = checkForNull($entryLine);
 	
-	// remove the redundant "SN-" from serial numbers to save space
-	if(!$entryErrors)
+	// continue to further error checking
+	if(!$error)
 	{
-		$sn=substr($sn,3);
-		$syntaxErrors=checkForFormat($device);
-		$syntaxErrors=array_merge(checkForFormat($manu),$syntaxErrors);
-		$syntaxErrors=array_merge(checkForSNFormat($sn),$syntaxErrors);
-		if($syntaxErrors)
-			logErrors($dblink,$process,$line,$lineNum,$syntaxErrors);
-		if(!in_array($device, $deviceArray))
-			wordMatcher($device,$deviceArray,$entryErrors,$spellingErrors);
-		if(!in_array($manu,$manuArray))
-			wordMatcher($manu,$manuArray,$entryErrors,$spellingErrors);
-	}
-	if($entryErrors)
-	{
-		logErrors($dblink,$process,$line,$lineNum,$entryErrors);
-		continue;
-	}
-	if($spellingErrors)
-		logErrors($dblink,$process,$line,$lineNum,$spellingErrors);
-	if(addItemToArray($device,$deviceArray))
-	{
-		$sql = "Insert into `device_types` (`device_type`) values ('$device')";
-		queryEntry($dblink,$sql,$process);
-	}
-	if(addItemToArray($manu,$manuArray))
-	{
-		$sql = "Insert into `manufacturers` (`manufacturer`) values ('$manu')";
-		queryEntry($dblink,$sql,$process);
-	}
-	
-	// check for length
-	lengthCheck($entryLine,$maxEntryLengths,$entryErrors);
+		$sn=substr($sn,3); // remove the redundant "SN-" from serial numbers to save space
+		$error=checkForFormat($device);
+		$error=checkForFormat($manu);
+		$error=checkSNFormat($sn);
+		if(!array_key_exists($device,$deviceArray))
+			$error = wordMatcher($device,$deviceArray);
+		if(!array_key_exists($manu,$manuArray))
+			$error = wordMatcher($manu,$manuArray);
+		// Note: already identified every valid type, removed for efficiency
+		// if(addItemToArray($device,$deviceArray))
+		// {
+		// 	$sql = "Insert into `device_types` (`device_type`) values ('$device')";
+		// 	queryEntry($dblink,$sql,$process);
+		// }
+		// if(addItemToArray($manu,$manuArray))
+		// {
+		// 	$sql = "Insert into `manufacturers` (`manufacturer`) values ('$manu')";
+		// 	queryEntry($dblink,$sql,$process);
+		// }
+		// check for length
+		if(strlen($line[2])!==64)
+		{
+			$error = "Incorrect entry length";
+		}
 
-	// check for duplicate serial numbers
-	checkForDuplicates($sn,$snArray,$lineNum,$entryErrors);
-	
-	if(!$entryErrors)
+		// check for duplicate serial numbers
+		$error = checkForDuplicates($sn,$snArray,$lineNum);
+	}
+	if(!$error)
 	{
-		$sql="Insert into `devices` (`line_num`,`device_type`,`manufacturer`,`serial_number`) values ('$lineNum','$device','$manu','$sn')";
+		$sql="Insert into `devices` (`device_type`,`manufacturer`,`serial_number`) values ('$deviceArray[$device]','$manuArray[$manu]','$sn')";
 		queryEntry($dblink,$sql,$process);
 	}
 	else
 	{
-		logErrors($dblink,$process,$line,$lineNum,$entryErrors);
+		logErrors($dblink,$process,$line,$lineNum,$error);
 	}
 }
 $endTime=microtime(true);
 $totalTime=$endTime-$startTime;
 $minutes=$totalTime / 60;
-echo "\n Total Time: $minutes minutes\n";
-echo "\n Rows per second: ". ($lineNum/$totalTime)."\n";
+$avgentryTime = $totalTime / $lineNum
+$total = "Total Time for process $processNum: $minutes minutes\n";
+$avg = "\n Rows per second for process $processNum: ". ($avgentryTime)."\n";
+file_put_contents($logFile, $total, FILE_APPEND);
+file_put_contents($logFile, $avg, FILE_APPEND);
 fclose($fp);
 ?>
 

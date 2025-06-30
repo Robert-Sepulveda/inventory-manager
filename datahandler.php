@@ -22,10 +22,10 @@ function isValidSN($string) {
     return preg_match('/^[a-f0-9]{64}$/', $string) === 1;
 }
 
-
+// returns any syntax error found, sanitizes string
 function checkForFormat(&$string)
 {
-	$syntaxErrMsgs = array();
+	$errorMessage;
 	$result = "";
 	for ($i = 0; $i < strlen($string);$i++)
 	{
@@ -37,18 +37,16 @@ function checkForFormat(&$string)
 		else
 		{
 			$errorMessage = "Syntax: " . addslashes($string[$i]);
-			echo $errorMessage . "\n";
-			addItemToArray($errorMessage, $syntaxErrMsgs);
 		}
 	}
 	$string = $result;
-	return $syntaxErrMsgs;
+	return $errorMessage;
 }
 
-
-function checkForSNFormat(&$string)
+// returns any serial number syntax errors found, sanitizes string
+function checkSNFormat(&$string)
 {
-	$syntaxErrMsgs = array();
+	$errorMessage;
 	$result = "";
 	for ($i = 0; $i < strlen($string);$i++)
 	{
@@ -57,23 +55,21 @@ function checkForSNFormat(&$string)
 		else
 		{
 			$errorMessage = "Syntax: " . addslashes($string[$i]);
-			addItemToArray($errorMessage, $syntaxErrMsgs);
 		}
 	}
 	$string = $result;
-	return $syntaxErrMsgs;
+	return $errorMessage;
 }
 
 
-function checkForDuplicates(&$sn,&$snArray,$lineNum,&$entryErrors)
+function checkForDuplicates(&$sn,&$snArray,$lineNum)
 {
 	if(!in_array($sn,$snArray))
 	{
 		addItemToArray($sn,$snArray);
 		return;
 	}
-	$entryErrors[]="Duplicate entry found";
-	return;
+	return "Duplicate entry found";
 }
 
 function checkValidEntryCount(&$line,&$countError)
@@ -91,6 +87,7 @@ function checkValidEntryCount(&$line,&$countError)
 	return;
 }
 
+// returns too many entries if line has more than 3 elements
 function checkEntryCount(&$line,&$countError,&$entryErrors)
 {
 	$i=0;
@@ -112,75 +109,69 @@ function checkEntryCount(&$line,&$countError,&$entryErrors)
 	return;
 }
 
-function checkForNull(&$line,&$entryErrors)
+// returns an error string indicating an column is null
+function checkForNull(&$line)
 {
-	if(!$line)
-	{
-		$entryErrors[]="Null entry line";
-		return;
-	}
 	for($i=0;$i<count($line);$i++)
 	{
 		if($line[$i]===""||$line[$i]===" ")
 		{
-			$line[$i]="Null";
+			$line[$i]="Null"; // prevents an sql error when logging the line
 			if($i===0)
-				$entryErrors[]="Null device";
+				return "Null device";
 			else if($i===1)
-				$entryErrors[]="Null manufacturer";
+				return "Null manu";
 			else if($i===2)
-				$entryErrors[]="Null sn";
-			else
-				$entryErrors[]="Null entry";
+				return "Null sn";
 		}
 	}
 	return;
 }
 
+// tries to find a valid type that matches the mispelled string
 function wordMatcher(&$string,$stringArray,&$entryErrors,&$spellingErrors)
 {
-	$index = -1;
-	for($i=0;$i<count($stringArray);$i++)
+	$index;
+	while($foo = current($stringArray))
 	{
-		if(str_contains($stringArray[$i],$string))
+		if(str_contains($key($stringArray),$string))
 		{
-			if($index != -1)
+			if($index)
 			{
-				$entryErrors[]="Cannot identify string";
-				return;
+				return "Cannot identify string"; // multiple entries match the string
 			}
 			$index = $i;
 		}
 	}
-	if($index != -1)
+	if($index)
 	{
-		$spellingErrors[]="Mispelled word";
 		$string = $stringArray[$index];
+		return "Mispelled string";
 	}
-	return;
+	return "Cannot identify string";	// no matching strings found
 }
 
-function lengthCheck(&$line,$valueLen,&$entryErrors)
-{
-	for($i=0;$i<count($line);$i++)
-	{
-		if(strlen($line[$i])>$valueLen[$i])
-		{
-			$line[$i]=substr($line[$i],0,$valueLen[$i]);
-			if($i===0)
-				$entryErrors[]="device exceeds len";
-			else if($i===1)
-				$entryErrors[]="manu exceeds len";
-			else if($i===2)
-				$entryErrors[]="sn exceeds len";
-			else
-				$entryErrors[]="entry exceeds len";
-		}
-	}
-	if(strlen($line[2])!==$valueLen[2])
-		$entryErrors[]="sn not long enough";
-	return;
-}
+// function lengthCheck(&$line,$valueLen)
+// {
+// 	for($i=0;$i<count($line);$i++)
+// 	{
+// 		if(strlen($line[$i])>$valueLen[$i])
+// 		{
+// 			$line[$i]=substr($line[$i],0,$valueLen[$i]);
+// 			if($i===0)
+// 				$entryErrors[]="device exceeds len";
+// 			else if($i===1)
+// 				$entryErrors[]="manu exceeds len";
+// 			else if($i===2)
+// 				$entryErrors[]="sn exceeds len";
+// 			else
+// 				$entryErrors[]="entry exceeds len";
+// 		}
+// 	}
+// 	if(strlen($line[2])!==$valueLen[2])
+// 		$entryErrors[]="sn not long enough";
+// 	return;
+// }
 
 function cycleLines(&$fp,$target)
 {
@@ -218,16 +209,16 @@ function queryEntry($dblink,$sql,$processNum)
 	}
 }
 
-function logErrors($dblink,$key,$line,$lineNum,$errorMsgs)
+// logs an error to the database
+function logErrors($dblink,$key,$line,$lineNum,$errorMessage)
 {
 	return;
 	$record=addslashes($line[0]).','.addslashes($line[1]).','.addslashes($line[2]);
-	$sql="Insert into `import_log` (`line_number`,`error_type`,`raw_data`) values ('$lineNum','$errorMsgs[0]','$record')";
+	$sql="Insert into `import_log` (`line_number`,`error_type`,`raw_data`) values ('$lineNum','$errorMessage','$record')";
 	try{
 		$result = $dblink->query($sql);
 		if($result)
-			echo"successful insert of entry ".$lineNum."\n";
-		//	echo "\n Current line: ".$line[0],' '.$line[1].' '.$line[2]."\n";
+			echo"successful error log of entry ".$lineNum."\n";
 	}catch (mysqli_sql_exception $e){
 		switch($e->getCode()){
 			case 1062:
