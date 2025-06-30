@@ -80,7 +80,6 @@ while (($line=fgetcsv($fp)) !== FALSE)
 		// check for length
 		if(strlen($entryLine[2])!==64)
 		{
-			echo $sn;
 			$error = "Incorrect entry length";
 		}
 
@@ -91,12 +90,10 @@ while (($line=fgetcsv($fp)) !== FALSE)
 	if(!$error)
 	{
 		$sql="Insert into `testTable` (`device_type`,`manufacturer`,`serial_number`) values ('$deviceArray[$device]','$manuArray[$manu]','$sn')";
-		echo "line values: $deviceArray[$device],$manuArray[$manu],$sn\n";
 		queryEntry($dblink,$sql,$process,$lineNum);
 	}
 	else
 	{
-		echo "error found in $lineNum: $error\n";
 		logErrors($dblink,$process,$line,$lineNum,$error);
 	}
 }
@@ -105,7 +102,7 @@ $totalTime=$endTime-$startTime;
 $minutes=$totalTime / 60;
 $avgentryTime = $minutes / $lineNum;
 $total = "Total Time for process $processNum: $minutes minutes\n";
-$avg = "\n Rows per second for process $processNum: ". ($avgentryTime)."\n";
+$avg = "Rows per second for process $processNum: ". ($avgentryTime)."\n\n";
 file_put_contents($timeLog, $total, FILE_APPEND);
 file_put_contents($timeLog, $avg, FILE_APPEND);
 fclose($fp);

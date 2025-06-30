@@ -12,16 +12,6 @@ if($argv[1] == 1)
 		$count ++;
 		echo "beginning process ". ($key-2) ."\n";
 		shell_exec("/usr/bin/php /var/www/html/import.php $key $value > /home/ubuntu/import.log 2>/home/ubuntu/import.log &");
-		if($count === 5)
-		{
-			if($batch < 6)
-				sleep(1200);
-			else
-				sleep(2400);
-			
-			$batch++;
-			$count=0;
-		}
 	}
 }
 echo "all processes running\n";
