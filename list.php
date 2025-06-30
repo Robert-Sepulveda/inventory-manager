@@ -1,5 +1,5 @@
 <?php
-$directory="/home/ubuntu/files/test";
+$directory="/home/ubuntu/files/";
 $scanned_dir=array_diff(scandir($directory),array('..','.'));		// filter out .. and . from our directory array by getting the difference
 $count = 0;
 $batch = 0;

@@ -19,7 +19,7 @@ try{
 }
 
 // open our current file
-$fileName="/home/ubuntu/files/test/$key";
+$fileName="/home/ubuntu/files/$key";
 if(!file_exists($fileName))
 	die("file not found.\n");
 $fp=fopen("$fileName","r") ;
