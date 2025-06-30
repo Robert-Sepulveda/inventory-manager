@@ -162,7 +162,7 @@
 			queryWebData($dblink,$sql,$endPoint,$uri);
 			$end = microtime(true);
 			$totalTime=$end-$start;
-			$log = "Total time to insert entry: $totalTime seconds";
+			$log = "Total time to insert entry: $totalTime seconds\n";
 			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=EquipmentAdded");				
 		}
@@ -180,7 +180,7 @@
 			queryWebData($dblink,$sql,$endPoint,$uri);
 			$end = microtime(true);
 			$totalTime=$end-$start;
-			$log = "Total time to insert entry: $totalTime seconds";
+			$log = "Total time to insert entry: $totalTime seconds\n";
 			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=DeviceAdded");
 							
@@ -199,7 +199,7 @@
 			queryWebData($dblink,$sql,$endPoint,$uri);
 			$end = microtime(true);
 			$totalTime=$end-$start;
-			$log = "Total time to insert entry: $totalTime seconds";
+			$log = "Total time to insert entry: $totalTime seconds\n";
 			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=ManufacturerAdded");
 		}
