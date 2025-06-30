@@ -52,6 +52,7 @@
 		$db="equipment";
 		$dblink = db_connect($db);
 		$line = 1;
+		$timeLog="/var/log/test-results.log";
 		if (!isset($_GET['type']))
 		{
 			echo '<a class="btn btn-primary" href="search.php?type=device">Search by Device</a>';
@@ -139,6 +140,7 @@
 
 		if (isset($_POST['submit']))
 		{
+			$start = microtime(true);
 			echo '<table class="display" style="width:100%">';
 			echo '<thead>';
 			echo '<tr><th>Number</th><th>Device Type</th><th>Manufacturer</th><th>Serial Number</th>';
@@ -211,6 +213,10 @@
 				$line++;
 			}
 			echo '</tbody>';
+			$end = microtime(true);
+			$totalTime=$endTime-$startTime;
+			$log = "Total time to fetch query: $totalTime seconds";
+			file_put_contents($timeLog, $avg, FILE_APPEND);
 		}
 		?>
     </div>
