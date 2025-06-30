@@ -12,28 +12,10 @@ if($argv[1] == 1)
 		$count ++;
 		echo "beginning process ". ($key-2) ."\n";
 		shell_exec("/usr/bin/php /var/www/html/import.php $key $value > /home/ubuntu/import.log 2>/home/ubuntu/import.log &");
+		if($count == 5)
+			sleep(3*60);
+		
 	}
 }
 echo "all processes running\n";
-//else if($argv[1]==2)
-//{
-////	foreach($scanned_dir as $key=>$value)
-////	{
-////		if($key==$argv[2])
-////		{
-////			echo "beginning process $key\n";
-////			shell_exec("/usr/bin/php /var/www/html/import.php $key $value");
-////			echo "process $key finished\n";
-////		}
-////	}
-//	shell_exec("/usr/bin/php /var/www/html/import.php 2 /home/ubuntu/aag217.csv");
-//}
-$endTime=microtime(true);
-$totalTime=$endTime-$startTime;
-$minutes=$totalTime / 60;
-$average=$minutes / 10;
-$total = "Total time for all processes: $minutes minutes\n";
-$avg = "Average time for process: $average minutes\n";
-file_put_contents($timeLog, $total, FILE_APPEND);
-file_put_contents($timeLog, $avg, FILE_APPEND);
 ?>
