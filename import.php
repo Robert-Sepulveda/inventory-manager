@@ -78,8 +78,9 @@ while (($line=fgetcsv($fp)) !== FALSE)
 		// 	queryEntry($dblink,$sql,$process);
 		// }
 		// check for length
-		if(strlen($line[2])!==64)
+		if(strlen($entryLine[2])!==64)
 		{
+			echo $sn;
 			$error = "Incorrect entry length";
 		}
 
