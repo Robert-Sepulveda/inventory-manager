@@ -84,7 +84,8 @@ while (($line=fgetcsv($fp)) !== FALSE)
 		}
 
 		// check for duplicate serial numbers
-		$error = checkForDuplicates($sn,$snArray,$lineNum);
+		if(!$error)
+			$error = checkForDuplicates($sn,$snArray,$lineNum);
 	}
 	if(!$error)
 	{
@@ -94,7 +95,7 @@ while (($line=fgetcsv($fp)) !== FALSE)
 	}
 	else
 	{
-		echo "error found in $linenum: $error";
+		echo "error found in $linenum: $error\n";
 		logErrors($dblink,$process,$line,$lineNum,$error);
 	}
 }
