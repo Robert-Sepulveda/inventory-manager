@@ -100,7 +100,7 @@ while (($line=fgetcsv($fp)) !== FALSE)
 $endTime=microtime(true);
 $totalTime=$endTime-$startTime;
 $minutes=$totalTime / 60;
-$avgentryTime = $minutes / $lineNum;
+$avgentryTime = $totalTime / $lineNum;
 $total = "Total Time for process $processNum: $minutes minutes\n";
 $avg = "Rows per second for process $processNum: ". ($avgentryTime)."\n\n";
 file_put_contents($timeLog, $total, FILE_APPEND);
