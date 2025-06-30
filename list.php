@@ -10,7 +10,7 @@ if($argv[1] == 1)
 	foreach($scanned_dir as $key=>$value)
 	{
 		$count ++;
-		echo "beginning process ". $key-2 ."\n";
+		echo "beginning process ". ($key-2) ."\n";
 		shell_exec("/usr/bin/php /var/www/html/import.php $key $value > /home/ubuntu/import.log 2>/home/ubuntu/import.log &");
 		if($count === 5)
 		{

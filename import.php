@@ -1,7 +1,7 @@
 <?php
 $process = $argv[1];
 $key = "$argv[2]";
-echo "process ". $process-2 ." to process entries from file $key\n";
+echo "process ". ($process-2) ." to process entries from file $key\n";
 include 'datahandler.php';
 
 $un="web_user";
