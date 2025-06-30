@@ -131,7 +131,6 @@ function checkForNull(&$line)
 // tries to find a valid type that matches the mispelled string
 function wordMatcher(&$string,$stringArray)
 {
-	echo "In wordMatcher: $string";
 	$stringKey=null;
 	foreach($stringArray as $key => $value)
 	{
