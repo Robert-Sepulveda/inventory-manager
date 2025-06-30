@@ -25,7 +25,7 @@ function isValidSN($string) {
 // returns any syntax error found, sanitizes string
 function checkForFormat(&$string)
 {
-	$errorMessage;
+	$errorMessage=null;
 	$result = "";
 	for ($i = 0; $i < strlen($string);$i++)
 	{
@@ -46,7 +46,7 @@ function checkForFormat(&$string)
 // returns any serial number syntax errors found, sanitizes string
 function checkSNFormat(&$string)
 {
-	$errorMessage;
+	$errorMessage=null;
 	$result = "";
 	for ($i = 0; $i < strlen($string);$i++)
 	{
@@ -91,7 +91,7 @@ function checkValidEntryCount(&$line,&$countError)
 function checkEntryCount(&$line,&$countError,&$entryErrors)
 {
 	$i=0;
-	while(count($line) > 3 && i < count($line))
+	while(count($line) > 3 && $i < count($line))
 	{
 		if($line[$i]===""||$line[$i]===" ")
 		{
@@ -129,23 +129,23 @@ function checkForNull(&$line)
 }
 
 // tries to find a valid type that matches the mispelled string
-function wordMatcher(&$string,$stringArray,&$entryErrors,&$spellingErrors)
+function wordMatcher(&$string,$stringArray)
 {
-	$index;
+	$key=null;
 	while($foo = current($stringArray))
 	{
-		if(str_contains($key($stringArray),$string))
+		if(str_contains(key($stringArray),$string))
 		{
-			if($index)
+			if($key)
 			{
 				return "Cannot identify string"; // multiple entries match the string
 			}
-			$index = $i;
+			$key = key($stringArray);
 		}
 	}
-	if($index)
+	if($key)
 	{
-		$string = $stringArray[$index];
+		$string = $key;
 		return "Mispelled string";
 	}
 	return "Cannot identify string";	// no matching strings found
@@ -181,7 +181,7 @@ function cycleLines(&$fp,$target)
 		$foo = $line=fgetcsv($fp);
 }
 
-function queryEntry($dblink,$sql,$processNum)
+function queryEntry($dblink,$sql,$processNum,$lineNum)
 {
 	try{
 		$result = $dblink->query($sql);
@@ -212,7 +212,6 @@ function queryEntry($dblink,$sql,$processNum)
 // logs an error to the database
 function logErrors($dblink,$key,$line,$lineNum,$errorMessage)
 {
-	return;
 	$record=addslashes($line[0]).','.addslashes($line[1]).','.addslashes($line[2]);
 	$sql="Insert into `import_log` (`line_number`,`error_type`,`raw_data`) values ('$lineNum','$errorMessage','$record')";
 	try{
