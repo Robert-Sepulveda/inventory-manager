@@ -31,7 +31,7 @@ $manuArray=array("Huawei"=>0,"Vizio"=>1,"Samsung"=>2,"Nokia"=>3,"KIA"=>4,"Ford"=
 $snArray=array();
 $maxEntryLength=64;
 $processNum = intval($process)-2;
-$fileSize = 10000
+$fileSize = 10000;
 $lineNum = $target + ($processNum * $fileSize);
 $timeLog="/var/log/test-results.log"
 
