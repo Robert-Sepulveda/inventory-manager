@@ -95,7 +95,7 @@ while (($line=fgetcsv($fp)) !== FALSE)
 	}
 	else
 	{
-		echo "error found in $linenum: $error\n";
+		echo "error found in $lineNum: $error\n";
 		logErrors($dblink,$process,$line,$lineNum,$error);
 	}
 }
