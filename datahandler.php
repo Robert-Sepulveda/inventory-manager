@@ -205,7 +205,7 @@ function queryEntry($dblink,$sql,$processNum,$lineNum)
 				error_log("Database error in devices: ".$e->getMessage());
 		}
 		error_log("An SQL error has occured in process: $processNum\n");
-		die("Query to devices failed.\n");
+		die("Query to devices failed.". $e->getMessage() ."\n");
 	}
 }
 
