@@ -49,6 +49,7 @@
 		$uri = $_SERVER['REMOTE_ADDR'];
 		$db="equipment";
 		$dblink=db_connect($db);
+		$timeLog="/var/log/test-results.log";
 		if (!isset($_GET['type']))
 		{
 			echo '<a class="btn btn-primary" href="add.php?type=equipment">Add equipment</a>';
@@ -162,6 +163,7 @@
 			$end = microtime(true);
 			$totalTime=$end-$start;
 			$log = "Total time to insert entry: $totalTime seconds";
+			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=EquipmentAdded");				
 		}
 		else if (isset($_POST['submit']) and $_POST['submit'] == "device")
@@ -179,6 +181,7 @@
 			$end = microtime(true);
 			$totalTime=$end-$start;
 			$log = "Total time to insert entry: $totalTime seconds";
+			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=DeviceAdded");
 							
 		}
@@ -197,6 +200,7 @@
 			$end = microtime(true);
 			$totalTime=$end-$start;
 			$log = "Total time to insert entry: $totalTime seconds";
+			file_put_contents($timeLog, $log, FILE_APPEND);
 			redirect("index.php?msg=ManufacturerAdded");
 		}
 		?>
