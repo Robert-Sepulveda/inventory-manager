@@ -138,6 +138,7 @@ function wordMatcher(&$string,$stringArray)
 		{
 			if($stringKey)
 			{
+				echo "cannot id string: $string";
 				return "Cannot identify string"; // multiple entries match the string
 			}
 			$stringKey = $key;
